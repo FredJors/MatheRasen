@@ -80,12 +80,21 @@ netlify.toml            Netlify-Konfiguration (statisch, kein Build)
 | Balance/Levelgröße | `js/config.js` | Zentrale Werte (`GRID`, `BALANCE`) |
 | Kosmetik/Skins (geplant) | Renderer-Paletten | Farbpaletten in `renderer.js` sind zentral definiert und austauschbar |
 
-## Supabase-Anbindung (geplant)
+## Supabase-Anbindung (aktiv)
 
-`js/core/storage.js` ist die einzige Stelle, die speichert. Für Supabase einen Treiber mit
-derselben Schnittstelle (`get/set/remove`) einhängen (`setDriver(...)`).
+Umgesetzt als **Offline-first-Sync**: localStorage bleibt der schnelle lokale Puffer,
+die Cloud wird verzögert aktualisiert. Bausteine:
 
-Vorgeschlagenes Schema:
+- `js/core/supabaseConfig.js` – Projekt-URL + Publishable Key (öffentlich, Sicherheit via RLS)
+- `js/core/supabase.js` – minimaler Auth+REST-Client (nur `fetch`, keine CDN-Abhängigkeit)
+- `js/core/sync.js` – Konto anlegen/anmelden, Spielstand-Push (debounced), `task_log`
+- Onboarding: Registrieren (mit Passwort) / Anmelden / lokaler Fallback ohne Konto
+- Profil: Cloud-Status + Abmelden
+
+**Wichtig (Supabase-Dashboard):** Authentication → Sign In / Providers → E-Mail →
+„Confirm email" ausschalten, sonst müssen Kinder erst einen Bestätigungslink klicken.
+
+Schema (im SQL Editor ausführen):
 
 ```sql
 create table profiles (
@@ -116,6 +125,26 @@ create table task_log (          -- für Lernfortschritts-Analyse
   correct boolean,
   created_at timestamptz default now()
 );
+
+-- Row Level Security aktivieren
+alter table profiles enable row level security;
+alter table saves enable row level security;
+alter table task_log enable row level security;
+```
+
+Zugriffsregeln (danach im SQL Editor ausführen – jeder Nutzer darf nur die eigenen Daten):
+
+```sql
+create policy "profil lesen"    on profiles for select using (auth.uid() = id);
+create policy "profil anlegen"  on profiles for insert with check (auth.uid() = id);
+create policy "profil aendern"  on profiles for update using (auth.uid() = id) with check (auth.uid() = id);
+
+create policy "save lesen"      on saves for select using (auth.uid() = profile_id);
+create policy "save anlegen"    on saves for insert with check (auth.uid() = profile_id);
+create policy "save aendern"    on saves for update using (auth.uid() = profile_id) with check (auth.uid() = profile_id);
+
+create policy "log lesen"       on task_log for select using (auth.uid() = profile_id);
+create policy "log anlegen"     on task_log for insert with check (auth.uid() = profile_id);
 ```
 
 ## Hinweis zu den Lehrplänen

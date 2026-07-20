@@ -34,15 +34,28 @@ export function getSavedGarden() { return savedGarden; }
 
 export function persist(gardenData) {
   if (state.profile) storage.set('profile', state.profile);
-  storage.set('save', {
+  const payload = {
     coins: state.coins,
     xp: state.xp,
     upgrades: state.upgrades,
     stats: state.stats,
     battery: state.battery,
     garden: gardenData ?? savedGarden,
-  });
+  };
+  storage.set('save', payload);
   if (gardenData) savedGarden = gardenData;
+  emit('persisted', payload); // Cloud-Sync hört mit (js/core/sync.js)
+}
+
+// Cloud-Spielstand übernehmen (z. B. nach Login auf neuem Gerät)
+export function applyCloudSave(row) {
+  if (!row) return;
+  state.coins = row.coins ?? 0;
+  state.xp = row.xp ?? 0;
+  state.upgrades = row.upgrades ?? {};
+  Object.assign(state.stats, row.stats ?? {});
+  state.battery = row.battery ?? BALANCE.batteryMax;
+  savedGarden = row.garden ?? null;
 }
 
 export function setProfile(profile) {

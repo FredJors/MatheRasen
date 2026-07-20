@@ -3,7 +3,8 @@
 // startet direkt das Spiel.
 // ============================================================
 
-import { loadAll, getSavedGarden, state } from './core/state.js';
+import { loadAll, getSavedGarden, state, applyCloudSave, setProfile } from './core/state.js';
+import { restoreOnBoot, initSync } from './core/sync.js';
 import { startLoop } from './core/loop.js';
 import { SAVE_INTERVAL_MS } from './config.js';
 import { game } from './game/game.js';
@@ -41,9 +42,18 @@ function startGame() {
   });
 }
 
-function boot() {
+async function boot() {
   loadAll();
   initNav();
+  initSync();
+
+  // Bestehende Cloud-Session? Dann Profil + Spielstand aus der Cloud laden
+  // (offline schlägt das leise fehl und es geht lokal weiter).
+  const cloud = await restoreOnBoot();
+  if (cloud?.profile) {
+    applyCloudSave(cloud.save);
+    setProfile(cloud.profile);
+  }
 
   if (state.profile) {
     startGame();

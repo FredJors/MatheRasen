@@ -361,7 +361,21 @@
 }
 .field input:focus, .field select:focus { border-color: var(--navy); background: #fff; }
 .form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-.form-error { color: var(--red); font-size: 14px; font-weight: 700; margin-bottom: 10px; }
+.form-error { color: var(--red); font-size: 14px; font-weight: 700; margin-bottom: 10px; line-height: 1.45; }
+.auth-switch { text-align: center; font-size: 14px; color: var(--ink-soft); font-weight: 600; margin-top: 14px; }
+.linklike {
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: inherit;
+  font-weight: 800;
+  color: var(--navy);
+  cursor: pointer;
+  text-decoration: underline;
+  padding: 0;
+}
+#ob-local { margin-top: 10px; }
+#btn-logout { margin-top: 12px; }
 .fineprint { font-size: 12px; color: var(--ink-soft); text-align: center; margin-top: 12px; line-height: 1.5; }
 
 /* ============ Upgrade-Karten ============ */

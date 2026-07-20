@@ -23,13 +23,16 @@
       <p class="sub">Pflege deinen Garten mit einem Mähroboter – und lade ihn mit Mathe auf.
         Die Aufgaben passen zu deiner Klassenstufe und deinem Bundesland.</p>
       <form id="onboard-form" novalidate>
-        <label class="field">Benutzername
-          <input id="ob-name" type="text" minlength="2" maxlength="20" required placeholder="z. B. Rasenprofi7" autocomplete="nickname">
+        <label class="field" id="ob-row-name">Benutzername
+          <input id="ob-name" type="text" minlength="2" maxlength="20" placeholder="z. B. Rasenprofi7" autocomplete="nickname">
         </label>
         <label class="field">E-Mail-Adresse
           <input id="ob-email" type="email" required placeholder="du@beispiel.de" autocomplete="email">
         </label>
-        <div class="form-row">
+        <label class="field">Passwort
+          <input id="ob-password" type="password" minlength="6" required placeholder="mindestens 6 Zeichen" autocomplete="new-password">
+        </label>
+        <div class="form-row" id="ob-row-gradestate">
           <label class="field">Klassenstufe
             <select id="ob-grade"></select>
           </label>
@@ -38,8 +41,10 @@
           </label>
         </div>
         <p id="ob-error" class="form-error hidden"></p>
-        <button class="btn btn-primary btn-big" type="submit">Los geht’s</button>
-        <p class="fineprint">Deine Angaben werden aktuell nur lokal auf diesem Gerät gespeichert.</p>
+        <button class="btn btn-primary btn-big" type="submit" id="ob-submit">Konto erstellen</button>
+        <button type="button" id="ob-local" class="btn btn-ghost hidden">Ohne Konto weiterspielen (nur dieses Gerät)</button>
+        <p class="auth-switch">Schon ein Konto? <button type="button" id="ob-switch" class="linklike">Anmelden</button></p>
+        <p class="fineprint" id="ob-fineprint">Dein Spielstand wird sicher in deinem Konto gespeichert – so kannst du auf jedem Gerät weiterspielen.</p>
       </form>
     </div>
   </section>
@@ -148,9 +153,11 @@
       <div class="card profile-card">
         <div class="profile-row"><span>Name</span><b id="pf-name">–</b></div>
         <div class="profile-row"><span>E-Mail</span><b id="pf-email">–</b></div>
+        <div class="profile-row"><span>Cloud-Sync</span><b id="pf-cloud">–</b></div>
         <label class="field">Klassenstufe <select id="pf-grade"></select></label>
         <label class="field">Bundesland <select id="pf-state"></select></label>
         <p class="fineprint">Änderungen passen sofort die Aufgaben an.</p>
+        <button id="btn-logout" class="btn btn-ghost hidden">Vom Cloud-Konto abmelden</button>
       </div>
       <div class="card">
         <h2 class="card-title">Statistik</h2>

@@ -10,6 +10,7 @@ import { state, bumpStat, addXp } from '../core/state.js';
 import { BALANCE } from '../config.js';
 import { icon } from './icons.js';
 import { hasExplanation, renderExplanationHtml } from './explanationView.js';
+import { logTask } from '../core/sync.js';
 
 const els = {};
 let current = null; // { task, onCorrect, attempts, selectedChoice, done }
@@ -117,6 +118,7 @@ function onCheck() {
     markChoices(true);
     bumpStat('tasksSolved');
     addXp(BALANCE.xpPerDiff * task.difficulty);
+    logTask(task, true);
     current.onCorrect?.(task);
     els.check.textContent = 'Weiter';
     offerExplanation();
@@ -135,6 +137,7 @@ function onCheck() {
     markChoices(false);
     setFeedback(`✖ Die richtige Antwort: ${formatSolution(task)}\n${task.solution}`, 'err');
     bumpStat('tasksFailed');
+    logTask(task, false);
     els.check.textContent = 'Weiter';
     offerExplanation();
   }

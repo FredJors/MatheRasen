@@ -5,6 +5,7 @@
 import { state, setProfile, resetAll, playerLevel } from '../core/state.js';
 import { on, emit } from '../core/events.js';
 import { fillGradeSelect, fillStateSelect } from './onboarding.js';
+import { isCloudConnected, cloudEmail, signOutCloud, updateCloudProfile } from '../core/sync.js';
 
 let els = {};
 
@@ -12,10 +13,21 @@ export function initProfileScreen() {
   els = {
     name: document.getElementById('pf-name'),
     email: document.getElementById('pf-email'),
+    cloud: document.getElementById('pf-cloud'),
+    logout: document.getElementById('btn-logout'),
     grade: document.getElementById('pf-grade'),
     state: document.getElementById('pf-state'),
     stats: document.getElementById('stats-grid'),
   };
+
+  els.logout.addEventListener('click', () => {
+    if (confirm('Vom Cloud-Konto abmelden? Du spielst dann nur noch lokal auf diesem Gerät weiter.')) {
+      signOutCloud();
+      renderCloud();
+      emit('toast', { icon: 'check', text: 'Abgemeldet – Spielstand bleibt lokal erhalten.' });
+    }
+  });
+  on('cloud', renderCloud);
 
   fillGradeSelect(els.grade, state.profile?.grade ?? 7);
   fillStateSelect(els.state, state.profile?.state ?? 'NW');
@@ -34,12 +46,21 @@ export function initProfileScreen() {
 }
 
 function updateProfile() {
-  setProfile({
+  const profile = {
     ...state.profile,
     grade: parseInt(els.grade.value, 10),
     state: els.state.value,
-  });
+  };
+  setProfile(profile);
+  updateCloudProfile(profile);
   emit('toast', { icon: 'book', text: 'Aufgaben an neuen Lehrplan angepasst!' });
+}
+
+function renderCloud() {
+  const connected = isCloudConnected();
+  els.cloud.textContent = connected ? `✓ Verbunden (${cloudEmail()})` : 'Nur dieses Gerät';
+  els.cloud.style.color = connected ? 'var(--green-deep)' : '';
+  els.logout.classList.toggle('hidden', !connected);
 }
 
 function render() {
@@ -48,6 +69,7 @@ function render() {
   els.email.textContent = state.profile.email;
   els.grade.value = String(state.profile.grade);
   els.state.value = state.profile.state;
+  renderCloud();
   renderStats();
 }
 
