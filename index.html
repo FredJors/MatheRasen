@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#eceff3">
+  <title>MatheRasen – Mähen. Rechnen. Wachsen.</title>
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M12 21v-8' stroke='%2316a34a' stroke-width='2.2' stroke-linecap='round' fill='none'/%3E%3Cpath d='M12 13c.2-3.6 2.6-5.8 6.5-6-.4 3.9-2.7 6-6.5 6Z' fill='%2322c55e'/%3E%3Cpath d='M12 13c-.2-3-2.2-4.8-5.5-5 .3 3.3 2.3 5 5.5 5Z' fill='%2316a34a'/%3E%3C/svg%3E">
+  <link rel="stylesheet" href="css/base.css">
+  <link rel="stylesheet" href="css/components.css">
+  <link rel="stylesheet" href="css/screens.css">
+</head>
+<body>
+<div id="app">
+
+  <!-- ===================== Onboarding ===================== -->
+  <section id="screen-onboarding" class="screen">
+    <div class="onboard-card card">
+      <div class="logo" aria-hidden="true">
+        <svg viewBox="0 0 24 24" width="40" height="40"><path d="M12 21v-8" stroke="#16a34a" stroke-width="2.2" stroke-linecap="round" fill="none"/><path d="M12 13c.2-3.6 2.6-5.8 6.5-6-.4 3.9-2.7 6-6.5 6Z" fill="#22c55e"/><path d="M12 13c-.2-3-2.2-4.8-5.5-5 .3 3.3 2.3 5 5.5 5Z" fill="#16a34a"/></svg>
+      </div>
+      <h1>MatheRasen</h1>
+      <p class="sub">Pflege deinen Garten mit einem Mähroboter – und lade ihn mit Mathe auf.
+        Die Aufgaben passen zu deiner Klassenstufe und deinem Bundesland.</p>
+      <form id="onboard-form" novalidate>
+        <label class="field">Benutzername
+          <input id="ob-name" type="text" minlength="2" maxlength="20" required placeholder="z. B. Rasenprofi7" autocomplete="nickname">
+        </label>
+        <label class="field">E-Mail-Adresse
+          <input id="ob-email" type="email" required placeholder="du@beispiel.de" autocomplete="email">
+        </label>
+        <div class="form-row">
+          <label class="field">Klassenstufe
+            <select id="ob-grade"></select>
+          </label>
+          <label class="field">Bundesland
+            <select id="ob-state"></select>
+          </label>
+        </div>
+        <p id="ob-error" class="form-error hidden"></p>
+        <button class="btn btn-primary btn-big" type="submit">Los geht’s</button>
+        <p class="fineprint">Deine Angaben werden aktuell nur lokal auf diesem Gerät gespeichert.</p>
+      </form>
+    </div>
+  </section>
+
+  <!-- ===================== Spiel ===================== -->
+  <section id="screen-game" class="screen">
+    <header class="topbar">
+      <button class="icon-btn" id="btn-help" aria-label="Hilfe">
+        <svg viewBox="0 0 24 24"><path d="M4 7h16M4 12h16M4 17h16" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" fill="none"/></svg>
+      </button>
+      <div class="topbar-title">
+        <h1 id="garden-title">MatheRasen</h1>
+        <span id="garden-sub" class="topbar-sub">Klasse – · –</span>
+      </div>
+      <div class="topbar-actions">
+        <button class="icon-btn" id="btn-bell" aria-label="Ereignisse im Garten">
+          <svg viewBox="0 0 24 24"><path d="M12 3a6 6 0 0 0-6 6v3.6L4.4 16h15.2L18 12.6V9a6 6 0 0 0-6-6Zm-2 15a2.2 2.2 0 0 0 4 0" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round" stroke-linecap="round" fill="none"/></svg>
+          <span id="bell-badge" class="badge hidden">0</span>
+        </button>
+        <button class="icon-btn" id="btn-settings" aria-label="Profil und Einstellungen">
+          <svg viewBox="0 0 24 24"><path d="M10.6 3.5 8.2 4.9l-.1 2.3-2 1.2-2.1-.9L2.6 10l1.9 1.3v2.4L2.6 15l1.4 2.5 2.1-.9 2 1.2.1 2.3 2.4 1.4h2.8l2.4-1.4.1-2.3 2-1.2 2.1.9 1.4-2.5-1.9-1.3v-2.4l1.9-1.3-1.4-2.5-2.1.9-2-1.2-.1-2.3-2.4-1.4Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round" fill="none" transform="scale(.92) translate(1 1)"/><circle cx="12" cy="12.5" r="2.6" stroke="currentColor" stroke-width="1.7" fill="none"/></svg>
+        </button>
+      </div>
+    </header>
+
+    <div class="game-main">
+      <div class="canvas-wrap">
+        <div id="bubble" class="bubble">
+          <span class="bubble-ico" id="bubble-ico">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="10" fill="none" stroke="currentColor" stroke-width="2"/><path d="M12.8 6.5 9 13h2.6l-.4 4.5L15 11h-2.6l.4-4.5Z" fill="currentColor"/></svg>
+          </span>
+          <span class="bubble-txt">
+            <small id="bubble-label">Akku</small>
+            <b><span id="bubble-val">100</span><i>%</i></b>
+          </span>
+        </div>
+        <canvas id="garden-canvas"></canvas>
+      </div>
+
+      <aside class="panel">
+        <div class="pill-row">
+          <button class="pill pill-btn pill-book" id="btn-wissen" aria-label="Lernheft öffnen" title="Lernheft">
+            <svg viewBox="0 0 24 24"><path d="M12 6.3C10 4.8 7.6 4.3 4.5 4.3v13.2c3.1 0 5.5.5 7.5 2 2-1.5 4.4-2 7.5-2V4.3c-3.1 0-5.5.5-7.5 2Z" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linejoin="round"/><path d="M12 6.3v13.2" stroke="currentColor" stroke-width="1.9"/></svg>
+          </button>
+          <div class="pill pill-batt">
+            <span id="batt-ico" class="batt-ico"><i id="batt-fill"></i></span>
+            <b id="batt-val">100</b><i>%</i>
+          </div>
+          <div class="pill pill-coins">
+            <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#f5b70a"/><circle cx="12" cy="12" r="6.4" fill="none" stroke="#e09b00" stroke-width="1.6"/><path d="M12 8.6v6.8M9.8 10.4h4.4M9.8 13.6h4.4" stroke="#a97400" stroke-width="1.5" stroke-linecap="round"/></svg>
+            <b class="coin-val">0</b>
+          </div>
+          <button class="pill pill-btn" id="btn-flash" aria-label="Mathe-Boost: Aufgabe lösen">
+            <svg viewBox="0 0 24 24"><path d="M13 3 6 13.5h4.4L10.5 21l7-10.5h-4.4L13 3Z" fill="currentColor"/></svg>
+          </button>
+        </div>
+
+        <div class="card status-card">
+          <div class="status-line">
+            <span id="status-dot" class="dot dot-green"></span>
+            <span id="status-text">Bereit</span>
+          </div>
+          <button id="btn-main" class="btn btn-primary btn-big" aria-label="Start / Pause">
+            <span id="btn-main-ico">
+              <svg viewBox="0 0 24 24"><path d="M8.5 5.8v12.4L19 12 8.5 5.8Z" fill="currentColor"/></svg>
+            </span>
+          </button>
+          <button id="btn-boost" class="btn btn-ghost">
+            <svg viewBox="0 0 24 24"><path d="M13 3 6 13.5h4.4L10.5 21l7-10.5h-4.4L13 3Z" fill="currentColor"/></svg>
+            <span>Mathe-Boost · Aufgabe lösen</span>
+          </button>
+        </div>
+      </aside>
+    </div>
+  </section>
+
+  <!-- ===================== Werkstatt (Upgrades) ===================== -->
+  <section id="screen-upgrades" class="screen">
+    <header class="page-head">
+      <h1>Werkstatt</h1>
+      <div class="pill pill-coins">
+        <svg viewBox="0 0 24 24"><circle cx="12" cy="12" r="9" fill="#f5b70a"/><circle cx="12" cy="12" r="6.4" fill="none" stroke="#e09b00" stroke-width="1.6"/></svg>
+        <b class="coin-val">0</b>
+      </div>
+    </header>
+    <div class="page-body" id="upgrade-list"></div>
+  </section>
+
+  <!-- ===================== Lernheft (Wissen) ===================== -->
+  <section id="screen-wissen" class="screen">
+    <header class="page-head">
+      <div class="page-head-left">
+        <button class="icon-btn" id="wissen-back" aria-label="Zurück">
+          <svg viewBox="0 0 24 24"><path d="M14.5 6 8.5 12l6 6" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+        </button>
+        <h1>Lernheft</h1>
+      </div>
+    </header>
+    <div class="page-body" id="wissen-body"></div>
+  </section>
+
+  <!-- ===================== Profil ===================== -->
+  <section id="screen-profile" class="screen">
+    <header class="page-head"><h1>Profil</h1></header>
+    <div class="page-body">
+      <div class="card profile-card">
+        <div class="profile-row"><span>Name</span><b id="pf-name">–</b></div>
+        <div class="profile-row"><span>E-Mail</span><b id="pf-email">–</b></div>
+        <label class="field">Klassenstufe <select id="pf-grade"></select></label>
+        <label class="field">Bundesland <select id="pf-state"></select></label>
+        <p class="fineprint">Änderungen passen sofort die Aufgaben an.</p>
+      </div>
+      <div class="card">
+        <h2 class="card-title">Statistik</h2>
+        <div class="stats-grid" id="stats-grid"></div>
+      </div>
+      <button id="btn-reset" class="btn btn-danger">Fortschritt zurücksetzen</button>
+    </div>
+  </section>
+
+  <!-- ===================== Bottom-Navigation ===================== -->
+  <nav id="bottombar" class="bottombar hidden">
+    <button data-nav="game" class="nav-btn active" aria-label="Garten">
+      <svg viewBox="0 0 24 24"><path d="M4 11.5 12 4l8 7.5V20h-5.5v-5h-5v5H4v-8.5Z" fill="currentColor"/></svg>
+    </button>
+    <button data-nav="upgrades" class="nav-btn" aria-label="Werkstatt">
+      <svg viewBox="0 0 24 24"><rect x="4" y="4" width="7" height="7" rx="2" fill="currentColor"/><rect x="13" y="4" width="7" height="7" rx="2" fill="currentColor" opacity=".55"/><rect x="4" y="13" width="7" height="7" rx="2" fill="currentColor" opacity=".55"/><path d="M16.5 13.5v6M13.5 16.5h6" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+    </button>
+    <button data-nav="profile" class="nav-btn" aria-label="Profil">
+      <svg viewBox="0 0 24 24"><circle cx="12" cy="8.5" r="3.8" fill="currentColor"/><path d="M4.5 20a7.5 7.5 0 0 1 15 0Z" fill="currentColor"/></svg>
+    </button>
+  </nav>
+
+  <!-- ===================== Aufgaben-Modal ===================== -->
+  <div id="task-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card card">
+      <div class="modal-head">
+        <span id="task-topic" class="chip">Thema</span>
+        <span id="task-diff" class="chip chip-diff">★</span>
+        <button id="task-close" class="icon-btn" aria-label="Schließen">
+          <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <p id="task-question" class="task-question">…</p>
+      <div id="task-answer-zone" class="task-answer-zone"></div>
+      <p id="task-feedback" class="task-feedback" aria-live="polite"></p>
+      <div class="modal-actions">
+        <button id="task-check" class="btn btn-primary btn-big">Prüfen</button>
+        <button id="task-explain" class="btn btn-ghost hidden"></button>
+      </div>
+      <div id="task-explanation" class="explanation hidden"></div>
+      <p id="task-reward" class="task-reward"></p>
+    </div>
+  </div>
+
+  <!-- ===================== Bestätigungs-Modal ===================== -->
+  <div id="confirm-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card card">
+      <div class="modal-head">
+        <h2 id="confirm-title">Bestätigen</h2>
+        <button id="confirm-close" class="icon-btn" aria-label="Schließen">
+          <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="confirm-body" class="info-body"></div>
+      <div class="modal-actions">
+        <button id="confirm-ok" class="btn btn-primary btn-big"></button>
+        <button id="confirm-cancel" class="btn btn-ghost">Abbrechen</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===================== Info-Modal ===================== -->
+  <div id="info-modal" class="modal hidden" role="dialog" aria-modal="true">
+    <div class="modal-card card">
+      <div class="modal-head">
+        <h2 id="info-title">So funktioniert’s</h2>
+        <button id="info-close" class="icon-btn" aria-label="Schließen">
+          <svg viewBox="0 0 24 24"><path d="m6 6 12 12M18 6 6 18" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"/></svg>
+        </button>
+      </div>
+      <div id="info-body" class="info-body"></div>
+    </div>
+  </div>
+
+  <div id="toast" class="toast hidden"></div>
+</div>
+
+<script type="module" src="js/main.js"></script>
+</body>
+</html>

@@ -1,0 +1,9 @@
+# MatheRasen ist eine statische Website ohne Build-Schritt.
+[build]
+  publish = "."
+
+[[headers]]
+  for = "/*"
+  [headers.values]
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"

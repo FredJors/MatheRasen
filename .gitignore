@@ -1,0 +1,15 @@
+# Betriebssystem-Müll
+Thumbs.db
+.DS_Store
+desktop.ini
+
+# Editor
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Später: lokale Umgebungsvariablen (Supabase-Keys etc.)
+.env
+.env.*

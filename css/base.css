@@ -1,0 +1,140 @@
+/* ============ Design-Tokens & Grundlayout ============ */
+:root {
+  --bg-1: #e7ebf1;
+  --bg-2: #f5f7f9;
+  --card: #ffffff;
+  --ink: #101b2c;
+  --ink-soft: #64748b;
+  --line: #e4e9ef;
+  --navy: #152238;
+  --navy-2: #223755;
+  --green: #22c55e;
+  --green-deep: #16a34a;
+  --green-soft: #e9f9ef;
+  --amber: #f5b70a;
+  --red: #ef4444;
+  --r-lg: 26px;
+  --r-md: 18px;
+  --r-sm: 12px;
+  --shadow: 0 10px 30px rgba(16, 27, 44, 0.08);
+  --shadow-soft: 0 4px 14px rgba(16, 27, 44, 0.06);
+  --nav-h: 64px;
+  --font: -apple-system, BlinkMacSystemFont, "Segoe UI", Inter, Roboto, "Helvetica Neue", sans-serif;
+}
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+html, body { height: 100%; }
+
+body {
+  font-family: var(--font);
+  color: var(--ink);
+  background: radial-gradient(120% 90% at 50% 0%, var(--bg-2) 0%, var(--bg-1) 100%);
+  -webkit-font-smoothing: antialiased;
+  overflow: hidden;
+  touch-action: manipulation;
+}
+
+#app {
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  position: relative;
+}
+@supports not (height: 100dvh) {
+  #app { height: 100vh; }
+}
+
+/* ============ Screens ============ */
+.screen {
+  display: none;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+.screen.active { display: flex; }
+
+.hidden { display: none !important; }
+
+/* ============ Topbar ============ */
+.topbar {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: max(10px, env(safe-area-inset-top)) 16px 8px;
+}
+.topbar-title { flex: 1; min-width: 0; }
+.topbar-title h1 {
+  font-size: 21px;
+  font-weight: 800;
+  letter-spacing: -0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+.topbar-sub {
+  font-size: 12px;
+  color: var(--ink-soft);
+  font-weight: 600;
+}
+.topbar-actions { display: flex; gap: 4px; }
+
+/* ============ Seiten (Werkstatt/Profil) ============ */
+.page-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: max(14px, env(safe-area-inset-top)) 20px 10px;
+  max-width: 620px;
+  width: 100%;
+  margin: 0 auto;
+}
+.page-head h1 { font-size: 24px; font-weight: 800; letter-spacing: -0.02em; }
+.page-head .pill { flex: 0 0 auto; }
+
+.page-body {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  padding: 6px 16px calc(var(--nav-h) + 24px);
+  max-width: 620px;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  -webkit-overflow-scrolling: touch;
+}
+
+/* ============ Bottom-Navigation ============ */
+.bottombar {
+  position: absolute;
+  left: 0; right: 0; bottom: 0;
+  height: calc(var(--nav-h) + env(safe-area-inset-bottom));
+  padding-bottom: env(safe-area-inset-bottom);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(12px);
+  border-top: 1px solid var(--line);
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  z-index: 20;
+}
+.nav-btn {
+  border: 0;
+  background: none;
+  width: 74px;
+  height: 46px;
+  border-radius: 14px;
+  color: #9aa7b8;
+  cursor: pointer;
+  display: grid;
+  place-items: center;
+  transition: color 0.15s;
+}
+.nav-btn svg { width: 26px; height: 26px; }
+.nav-btn.active { color: var(--ink); }
+.nav-btn:active { transform: scale(0.94); }
+
+/* Screens mit Bottombar brauchen Platz unten */
+#screen-game { padding-bottom: 0; }
