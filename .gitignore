@@ -13,3 +13,9 @@ desktop.ini
 # Später: lokale Umgebungsvariablen (Supabase-Keys etc.)
 .env
 .env.*
+
+# wrangler files
+.wrangler
+.dev.vars*
+!.dev.vars.example
+!.env.example
