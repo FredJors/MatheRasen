@@ -71,13 +71,35 @@ export function openTask({ difficulty, topicId, rewardHtml, onCorrect } = {}) {
   } else {
     const row = document.createElement('div');
     row.className = 'task-input-row';
+    const numeric = task.inputMode !== 'text';
+
     const input = document.createElement('input');
     input.className = 'task-input';
     input.id = 'task-input';
     input.autocomplete = 'off';
-    input.inputMode = task.inputMode === 'text' ? 'text' : 'decimal';
-    input.placeholder = task.inputMode === 'text' ? 'z. B. 3/4' : 'Deine Antwort';
+    input.inputMode = numeric ? 'decimal' : 'text';
+    input.placeholder = numeric ? 'Deine Antwort' : 'z. B. 3/4';
     input.addEventListener('keydown', (e) => { if (e.key === 'Enter') onCheck(); });
+
+    // ±-Knopf: die Zahlen-Tastatur am Handy hat keine Minus-Taste.
+    // Der Knopf setzt/entfernt ein führendes Minus – geräteunabhängig
+    // und ohne die Lösung zu verraten (erscheint bei jeder Zahlaufgabe).
+    if (numeric) {
+      const signBtn = document.createElement('button');
+      signBtn.type = 'button';
+      signBtn.className = 'sign-btn';
+      signBtn.textContent = '±';
+      signBtn.setAttribute('aria-label', 'Minus-Vorzeichen setzen oder entfernen');
+      signBtn.addEventListener('click', () => {
+        const v = input.value.trim().replace('−', '-');
+        input.value = v.startsWith('-') ? v.slice(1) : '-' + v;
+        input.focus();
+        const end = input.value.length;
+        try { input.setSelectionRange(end, end); } catch { /* egal */ }
+      });
+      row.appendChild(signBtn);
+    }
+
     row.appendChild(input);
     if (task.unit) {
       const unit = document.createElement('span');

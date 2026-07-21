@@ -282,6 +282,24 @@
 .task-input:focus { border-color: var(--navy); background: #fff; }
 .task-unit { font-size: 18px; font-weight: 800; color: var(--ink-soft); flex: 0 0 auto; }
 
+/* ±-Knopf: ersetzt die auf Handy-Zahlentastaturen fehlende Minus-Taste */
+.sign-btn {
+  flex: 0 0 auto;
+  align-self: stretch;
+  width: 54px;
+  border: 2px solid var(--line);
+  border-radius: 16px;
+  background: #fafbfc;
+  color: var(--ink);
+  font-family: inherit;
+  font-size: 24px;
+  font-weight: 800;
+  line-height: 1;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.sign-btn:active { background: #eef2f8; transform: scale(0.96); }
+
 .choice-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
