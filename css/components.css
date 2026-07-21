@@ -552,6 +552,78 @@
 .wissen-actions { display: flex; flex-direction: column; gap: 10px; margin-top: 14px; }
 .wissen-actions .btn svg { width: 19px; height: 19px; flex: 0 0 auto; }
 
+/* ============ Mastery / Lernfortschritt ============ */
+.mastery { display: flex; align-items: center; gap: 8px; margin-top: 5px; }
+.mastery-bar {
+  flex: 1;
+  max-width: 150px;
+  height: 7px;
+  border-radius: 4px;
+  background: var(--line);
+  overflow: hidden;
+}
+.mastery-bar i { display: block; height: 100%; border-radius: 4px; transition: width 0.45s ease; }
+.mastery-label { font-size: 11.5px; font-weight: 800; white-space: nowrap; }
+.mastery-bar i.lvl-0 { background: #cbd5e1; }
+.mastery-bar i.lvl-1 { background: #f5b70a; }
+.mastery-bar i.lvl-2 { background: #8ccb45; }
+.mastery-bar i.lvl-3 { background: #22c55e; }
+.mastery-bar i.lvl-4 { background: #16a34a; }
+.mastery-label.lvl-0 { color: #94a3b8; }
+.mastery-label.lvl-1 { color: #b8860b; }
+.mastery-label.lvl-2 { color: #5a9a24; }
+.mastery-label.lvl-3 { color: #16a34a; }
+.mastery-label.lvl-4 { color: #16a34a; }
+
+.topic-card.recommend { box-shadow: 0 0 0 2px #f4d780, var(--shadow); }
+.recommend-done { display: flex; gap: 12px; align-items: center; }
+.recommend-done svg { width: 28px; height: 28px; color: var(--amber); flex: 0 0 auto; }
+
+.topic-progress { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+.topic-progress .mastery { margin-top: 0; flex: 1; min-width: 120px; }
+.topic-progress-quote { font-size: 12.5px; color: var(--ink-soft); font-weight: 700; white-space: nowrap; }
+
+/* ============ Werkstatt: Tabs & Kosmetik ============ */
+.seg-toggle {
+  display: flex;
+  gap: 4px;
+  background: #e9edf2;
+  border-radius: 14px;
+  padding: 4px;
+  max-width: 620px;
+  width: calc(100% - 32px);
+  margin: 4px auto 2px;
+}
+.seg-btn {
+  flex: 1;
+  border: 0;
+  background: none;
+  font-family: inherit;
+  font-size: 15px;
+  font-weight: 800;
+  color: var(--ink-soft);
+  padding: 9px;
+  border-radius: 11px;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+.seg-btn.active { background: #fff; color: var(--ink); box-shadow: var(--shadow-soft); }
+
+.cosmetic-card { display: flex; align-items: center; gap: 14px; }
+.cosmetic-preview {
+  width: 56px;
+  height: 56px;
+  flex: 0 0 auto;
+  border-radius: 16px;
+  background: #f1f4f8;
+  display: grid;
+  place-items: center;
+  overflow: hidden;
+}
+.cosmetic-preview canvas { width: 52px; height: 52px; }
+.cosmetic-card .upgrade-buy .btn { display: flex; align-items: center; gap: 6px; }
+.cosmetic-card .upgrade-buy .btn svg { width: 15px; height: 15px; }
+
 /* ============ Toast ============ */
 .toast {
   position: absolute;

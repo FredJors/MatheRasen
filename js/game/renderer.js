@@ -7,6 +7,8 @@
 import { TILE_W, TILE_H, TILE_DEPTH, SPRITE_TOP, BALANCE } from '../config.js';
 import { OBSTACLES } from './obstacles.js';
 import { PLANTS } from './plants.js';
+import { state } from '../core/state.js';
+import { decorById, skinById } from './cosmetics.js';
 
 const TW2 = TILE_W / 2;
 const TH2 = TILE_H / 2;
@@ -239,6 +241,12 @@ export class Renderer {
     for (const p of garden.plants.values()) {
       entities.push({ depth: p.c + p.r - 0.01, draw: () => this.drawPlant(p, nowMs) });
     }
+    for (const id of state.cosmetics.owned) {
+      const item = decorById(id);
+      if (!item) continue; // Skins sind keine platzierten Objekte
+      const a = this.decorAnchor(item.spot);
+      entities.push({ depth: a.c + a.r, draw: () => this.drawDecor(item, a, nowMs) });
+    }
     entities.push({ depth: this.mower.c + this.mower.r + 0.01, draw: () => this.drawMower(nowMs) });
     entities.sort((a, b) => a.depth - b.depth);
     entities.forEach((e) => e.draw());
@@ -262,6 +270,29 @@ export class Renderer {
       ctx.fill();
     }
     PLANTS[p.type]?.draw(ctx, sx, sy, scale, p.seed, p.growth, nowMs);
+  }
+
+  // ---------- Garten-Deko (Kosmetik) ----------
+
+  // Feste Rand-Plätze außerhalb der Mähfläche (skaliert mit der
+  // Gartengröße); meiden Ladestation (Ecke 0,0) und Plus-Felder.
+  decorAnchor(spot) {
+    const g = this.garden;
+    const anchors = [
+      { c: g.cols * 0.22, r: g.rows - 1 + 1.6 },   // 0 vorne links
+      { c: g.cols * 0.78, r: g.rows - 1 + 1.6 },   // 1 vorne rechts
+      { c: g.cols - 1 + 1.6, r: g.rows * 0.75 },   // 2 rechts unten
+      { c: g.cols - 1 + 1.6, r: g.rows * 0.18 },   // 3 rechts oben
+      { c: -1.6, r: g.rows * 0.75 },               // 4 links unten
+      { c: -1.6, r: g.rows * 0.2 },                // 5 links oben
+    ];
+    return anchors[spot % anchors.length];
+  }
+
+  drawDecor(item, anchor, nowMs) {
+    const [wx, wy] = this.worldPos(anchor.c, anchor.r);
+    const [sx, sy] = this.toScreen(wx, wy);
+    item.draw(this.ctx, sx, sy, this.scale, nowMs);
   }
 
   // ---------- Plus-Felder (Rasen-Erweiterung) ----------
@@ -468,23 +499,25 @@ export class Renderer {
       else { ctx.beginPath(); ctx.rect(x, y, w, h); }
     };
 
+    const skin = skinById(state.cosmetics.skin);
+
     // Räder
     ctx.fillStyle = '#26313f';
     rr(-L / 2 - 1, -W / 2 - 2.5, 11, 5, 2.5); ctx.fill();
     rr(-L / 2 - 1, W / 2 - 2.5, 11, 5, 2.5); ctx.fill();
 
-    // Karosserie
-    ctx.fillStyle = '#f6f8f9';
-    ctx.strokeStyle = '#c9d1da';
+    // Karosserie (Skin)
+    ctx.fillStyle = skin.body;
+    ctx.strokeStyle = skin.stroke;
     ctx.lineWidth = 1.6;
     rr(-L / 2, -W / 2, L, W, 8); ctx.fill(); ctx.stroke();
 
-    // Front-Stoßfänger
-    ctx.fillStyle = '#3c4b5e';
+    // Front-Stoßfänger (Skin)
+    ctx.fillStyle = skin.bumper;
     rr(L / 2 - 6, -W / 2 + 1.5, 5.5, W - 3, [0, 6, 6, 0]); ctx.fill();
 
-    // Gelber Akzentstreifen
-    ctx.fillStyle = '#f5c518';
+    // Akzentstreifen (Skin)
+    ctx.fillStyle = skin.accent;
     rr(-2, -W / 2, 3.5, 3, 1); ctx.fill();
     rr(-2, W / 2 - 3, 3.5, 3, 1); ctx.fill();
 

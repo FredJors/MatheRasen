@@ -5,10 +5,22 @@
 
 import { GENERATORS, fmt } from './generators.js';
 import { getTopicsFor } from '../data/curricula.js';
-
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
+import { weightFor, recommendedDifficulty } from './mastery.js';
 
 let lastTopic = null;
+
+// Gewichtete Zufallsauswahl: Themen mit höherem Gewicht (Schwächen,
+// zuletzt Falsches, Neues) kommen häufiger dran.
+function weightedPick(ids) {
+  const weights = ids.map((id) => (id === lastTopic ? weightFor(id) * 0.15 : weightFor(id)));
+  const total = weights.reduce((s, w) => s + w, 0);
+  let roll = Math.random() * total;
+  for (let i = 0; i < ids.length; i++) {
+    roll -= weights[i];
+    if (roll <= 0) return ids[i];
+  }
+  return ids[ids.length - 1];
+}
 
 export function generateTask(profile, { difficulty, topicId } = {}) {
   let id;
@@ -18,16 +30,15 @@ export function generateTask(profile, { difficulty, topicId } = {}) {
   } else {
     const topics = getTopicsFor(profile).filter((tid) => GENERATORS[tid]);
     if (!topics.length) topics.push('nz_addsub');
-
-    // Nicht zweimal hintereinander dasselbe Thema
-    let candidates = topics.filter((t) => t !== lastTopic);
-    if (!candidates.length) candidates = topics;
-    id = pick(candidates);
+    id = weightedPick(topics);
     lastTopic = id;
   }
 
   const gen = GENERATORS[id];
-  const diff = Math.max(1, Math.min(gen.maxDiff, difficulty ?? (Math.random() < 0.6 ? 1 : 2)));
+  // Ohne feste Vorgabe passt sich die Schwierigkeit dem Können an.
+  const diff = difficulty != null
+    ? Math.max(1, Math.min(gen.maxDiff, difficulty))
+    : recommendedDifficulty(id, gen.maxDiff);
   const task = gen.gen(diff);
   return { ...task, topicId: id, topicLabel: gen.label, difficulty: diff };
 }

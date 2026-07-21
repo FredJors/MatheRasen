@@ -121,21 +121,40 @@ export function signOutCloud() {
 
 export async function pushSave(payload) {
   if (!isCloudConnected()) return;
+  // Kernfelder (immer vorhanden) + Zusatzfelder (topics/cosmetics).
+  // Fehlen die Zusatzspalten noch in der DB, wird ohne sie erneut
+  // versucht – so bricht der Sync nie ganz ab.
+  const core = {
+    profile_id: sb.currentUser().id,
+    coins: payload.coins,
+    xp: payload.xp,
+    upgrades: payload.upgrades,
+    stats: payload.stats,
+    battery: payload.battery,
+    garden: payload.garden,
+    updated_at: new Date().toISOString(),
+  };
+  const full = {
+    ...core,
+    topics: payload.topics,
+    topic_seq: payload.topicSeq,
+    cosmetics: payload.cosmetics,
+  };
+  const send = (body) => sb.rest('saves', {
+    method: 'POST',
+    headers: { Prefer: 'resolution=merge-duplicates' },
+    body,
+  });
   try {
-    await sb.rest('saves', {
-      method: 'POST',
-      headers: { Prefer: 'resolution=merge-duplicates' },
-      body: {
-        profile_id: sb.currentUser().id,
-        coins: payload.coins,
-        xp: payload.xp,
-        upgrades: payload.upgrades,
-        stats: payload.stats,
-        battery: payload.battery,
-        garden: payload.garden,
-        updated_at: new Date().toISOString(),
-      },
-    });
+    try {
+      await send(full);
+    } catch (e) {
+      if (/topics|cosmetics|topic_seq|column|schema|PGRST/i.test(e.message)) {
+        await send(core); // Zusatzspalten fehlen noch → Kern speichern
+      } else {
+        throw e;
+      }
+    }
     emit('cloud', { status: 'synced' });
   } catch {
     emit('cloud', { status: 'error' });

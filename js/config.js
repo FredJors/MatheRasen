@@ -61,6 +61,15 @@ export const BALANCE = {
     maxDelay: 26,
     baseMax: 2,             // Grundlimit; +1 je Erweiterung
   },
+
+  // Lern-Adaptivität: wie sich das Können (Mastery 0..1) pro Thema
+  // nach jeder Antwort verändert und ab wann ein Thema "gemeistert" ist.
+  mastery: {
+    gainBase: 0.18,         // Zuwachs bei richtiger Antwort (Basis)
+    gainPerDiff: 0.05,      // + pro Schwierigkeitsstufe darüber
+    loss: 0.26,             // Anteil, den eine falsche Antwort abzieht
+    masteredAt: 0.85,       // ab hier gilt ein Thema als gemeistert
+  },
 };
 
 export const SAVE_INTERVAL_MS = 5000;

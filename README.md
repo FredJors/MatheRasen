@@ -94,6 +94,15 @@ die Cloud wird verzögert aktualisiert. Bausteine:
 **Wichtig (Supabase-Dashboard):** Authentication → Sign In / Providers → E-Mail →
 „Confirm email" ausschalten, sonst müssen Kinder erst einen Bestätigungslink klicken.
 
+**Migration für Lernfortschritt & Kosmetik** (einmal im SQL Editor ausführen –
+ohne die Spalten synchronisiert der Rest trotzdem, nur Mastery/Deko bleiben dann lokal):
+
+```sql
+alter table saves add column if not exists topics    jsonb default '{}';
+alter table saves add column if not exists topic_seq int   default 0;
+alter table saves add column if not exists cosmetics jsonb default '{}';
+```
+
 Schema (im SQL Editor ausführen):
 
 ```sql

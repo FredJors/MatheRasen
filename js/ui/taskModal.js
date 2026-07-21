@@ -11,6 +11,7 @@ import { BALANCE } from '../config.js';
 import { icon } from './icons.js';
 import { hasExplanation, renderExplanationHtml } from './explanationView.js';
 import { logTask } from '../core/sync.js';
+import { recordResult } from '../math/mastery.js';
 
 const els = {};
 let current = null; // { task, onCorrect, attempts, selectedChoice, done }
@@ -118,6 +119,7 @@ function onCheck() {
     markChoices(true);
     bumpStat('tasksSolved');
     addXp(BALANCE.xpPerDiff * task.difficulty);
+    recordResult(task.topicId, task.difficulty, true);
     logTask(task, true);
     current.onCorrect?.(task);
     els.check.textContent = 'Weiter';
@@ -137,6 +139,7 @@ function onCheck() {
     markChoices(false);
     setFeedback(`✖ Die richtige Antwort: ${formatSolution(task)}\n${task.solution}`, 'err');
     bumpStat('tasksFailed');
+    recordResult(task.topicId, task.difficulty, false);
     logTask(task, false);
     els.check.textContent = 'Weiter';
     offerExplanation();
